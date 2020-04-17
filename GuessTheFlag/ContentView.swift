@@ -35,6 +35,17 @@ struct ContentView: View {
     @State private var scoreTitle = ""
     @State private var score = 0
 
+    //Animations
+    @State private var opacities = [ 1.0, 1.0, 1.0 ]
+
+
+    fileprivate func updateOpactity(index: Int) {
+        // Animation Challenge - Make the other two buttons fade out to 25% opacity.
+        var updateOpactity = [0.25, 0.25, 0.25]
+        updateOpactity[index] = 1.0
+        self.opacities = updateOpactity
+    }
+
     var body: some View {
         ZStack {
             //Color.blue.edgesIgnoringSafeArea(.all)
@@ -67,8 +78,9 @@ struct ContentView: View {
 
                         //Custom Image
                         FlagImage(name: self.countries[number])
+                        .opacity(self.opacities[number])
 
-                    }
+                    }.animation(.default)
                 }
 
                 Text("You Current Score Is: \(score)")
@@ -86,6 +98,11 @@ struct ContentView: View {
 
     func flagTapped(_ number: Int) {
 
+        if number == self.correctAnswer {
+            //Animation if correct
+            self.updateOpactity(index: number)
+        }
+
         //Add a delay so that alert doesnt cover flag animation
         let _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false, block: { timer in
             if number == self.correctAnswer {
@@ -100,6 +117,7 @@ struct ContentView: View {
     }
 
     func askQuestion() {
+        opacities = [ 1.0, 1.0, 1.0 ]
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
     }
