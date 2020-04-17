@@ -37,6 +37,13 @@ struct ContentView: View {
 
     //Animations
     @State private var opacities = [ 1.0, 1.0, 1.0 ]
+    @State private var rotations = [ 0.0, 0.0, 0.0 ]
+    @State private var scales: [CGFloat] = [ 1.0, 1.0, 1.0 ]
+
+    var isNewGame: Bool {
+        //As we set these for a new game - it's a way to know if we are starting or not
+        return (opacities == [ 1.0, 1.0, 1.0 ] && rotations == [ 0.0, 0.0, 0.0 ])
+    }
 
 
     fileprivate func updateOpactity(index: Int) {
@@ -44,6 +51,20 @@ struct ContentView: View {
         var updateOpactity = [0.25, 0.25, 0.25]
         updateOpactity[index] = 1.0
         self.opacities = updateOpactity
+    }
+
+    fileprivate func updateRotations(index: Int) {
+        // Animation Challenge - Make the other two buttons fade out to 25% opacity.
+        var updateRotations = [0.0, 0.0, 0.0]
+        updateRotations[index] = 360.0
+        self.rotations = updateRotations // update trigger state change -> animates
+    }
+
+    fileprivate func updateScales(index: Int) {
+        // Animation Challenge - Make the other two buttons fade out to 25% opacity.
+        var updateScales: [CGFloat] = [1.0, 1.0, 1.0]
+        updateScales[index] = 1.5
+        self.scales = updateScales // update trigger state change -> animates
     }
 
     var body: some View {
@@ -59,6 +80,7 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .font(.largeTitle)
                         .fontWeight(.black)
+                        .padding(.horizontal)
                 }
 
                 //Show three flags
@@ -79,8 +101,13 @@ struct ContentView: View {
                         //Custom Image
                         FlagImage(name: self.countries[number])
                         .opacity(self.opacities[number])
-
-                    }.animation(.default)
+                        // Animation Challenge 1
+                        // When you tap the correct flag, make it spin around 360 degrees on the Y axis.
+                        .rotation3DEffect(.degrees(self.rotations[number]), axis: (x: 0, y: 1, z: 0))
+                        .scaleEffect(self.scales[number])
+                    }
+                    //Want to ensure that animation doesnt run - i.e backwards when starting new game
+                    .animation(self.isNewGame ? nil : .default)
                 }
 
                 Text("You Current Score Is: \(score)")
@@ -98,26 +125,31 @@ struct ContentView: View {
 
     func flagTapped(_ number: Int) {
 
+        //Animation if correct
         if number == self.correctAnswer {
-            //Animation if correct
             self.updateOpactity(index: number)
+            self.updateRotations(index: number)
+        } else {
+            //Animation if wrong
+            self.updateScales(index: number)
         }
 
-        //Add a delay so that alert doesnt cover flag animation
-        let _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false, block: { timer in
+        //Alert - Add a delay so that alert doesn't cover flag animation
+        let _ = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { timer in
             if number == self.correctAnswer {
                 self.scoreTitle = "Correct"
                 self.score += 1
           } else {
                 self.scoreTitle = "Wrong, that's the flag of \(self.countries[number])!"
           }
-
             self.showingScore = true //triggers alert state change
         })
     }
 
     func askQuestion() {
         opacities = [ 1.0, 1.0, 1.0 ]
+        rotations = [ 0.0, 0.0, 0.0 ]
+        scales = [ 1.0, 1.0, 1.0 ]
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
     }
