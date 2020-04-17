@@ -85,14 +85,18 @@ struct ContentView: View {
     }
 
     func flagTapped(_ number: Int) {
-        if number == correctAnswer {
-            scoreTitle = "Correct"
-            score += 1
-        } else {
-            scoreTitle = "Wrong, that's the flag of \(countries[number])!"
-        }
 
-        showingScore = true
+        //Add a delay so that alert doesnt cover flag animation
+        let _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false, block: { timer in
+            if number == self.correctAnswer {
+                self.scoreTitle = "Correct"
+                self.score += 1
+          } else {
+                self.scoreTitle = "Wrong, that's the flag of \(self.countries[number])!"
+          }
+
+            self.showingScore = true //triggers alert state change
+        })
     }
 
     func askQuestion() {
