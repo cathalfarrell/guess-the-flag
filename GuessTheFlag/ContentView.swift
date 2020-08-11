@@ -8,23 +8,6 @@
 
 import SwiftUI
 
-
-/*
- Views & Modifiers - Challege 3
- Go back to project 2 and create a FlagImage() view that renders one flag image using the specific set of modifiers we had.
- */
-
-struct FlagImage: View {
-    var name: String
-    var body: some View {
-        Image(name)
-        .renderingMode(.original)
-        .clipShape(Capsule()) //make flag capsule shape
-        .overlay(Capsule().stroke(Color.black, lineWidth: 1.0)) //Overlay capsule stroke on top
-        .shadow(color: .black, radius: 2.0) //Add shadow behiond image
-    }
-}
-
 struct ContentView: View {
 
     // MARK: - Accessibility
