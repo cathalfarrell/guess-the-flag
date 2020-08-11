@@ -8,6 +8,19 @@
 
 import SwiftUI
 
+struct LargeLabel: ViewModifier {
+
+    // system font, size 24 and semibold
+    let font = Font.system(size: 30).weight(.black)
+
+    func body(content: Content) -> some View {
+        content
+        .foregroundColor(.white)
+        .font(font)
+        .padding(.horizontal)
+    }
+}
+
 struct ContentView: View {
 
     // MARK: - Accessibility
@@ -76,10 +89,7 @@ struct ContentView: View {
                     Text("Tap the flag of")
                         .foregroundColor(.white)
                     Text(countries[correctAnswer])
-                        .foregroundColor(.white)
-                        .font(.largeTitle)
-                        .fontWeight(.black)
-                        .padding(.horizontal)
+                    .modifier(LargeLabel())
                 }
 
                 //Show three flags
